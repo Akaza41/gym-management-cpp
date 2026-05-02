@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <string>
 #include "../include/httplib.h"
@@ -359,6 +360,13 @@ int main() {
             }
         }
         res.set_content("Staff Not Found!", "text/plain");
+    });
+// Serve frontend
+    app.Get("/", [](const httplib::Request&, httplib::Response& res) {
+        std::ifstream file("../frontend/index.html");
+        std::string content((std::istreambuf_iterator<char>(file)),
+                            std::istreambuf_iterator<char>());
+        res.set_content(content, "text/html");
     });
 
     cout << "================================\n";
