@@ -179,26 +179,133 @@
             "[API CALL] " + apiCall + "\n" + cppLines;
     }
 
-    async function registerCustomer() {
-        const name = document.getElementById('c-name').value;
-        const age = document.getElementById('c-age').value;
-        const fee = document.getElementById('c-fee').value;
+    // Helper — check if name already exists
+function nameExists(name, type) {
+    const key = type + '_names';
+    const names = JSON.parse(localStorage.getItem(key) || '[]');
+    return names.includes(name.toLowerCase());
+}
 
-        if(!name || !age || !fee) { showMsg('c-msg', 'Fill all fields!', false); return; }
+// Helper — save name to local list
+function saveName(name, type) {
+    const key = type + '_names';
+    const names = JSON.parse(localStorage.getItem(key) || '[]');
+    names.push(name.toLowerCase());
+    localStorage.setItem(key, JSON.stringify(names));
+}
 
-        updateLog('api-log',
-            'POST /register/customer',
-            '>> Customer::setData() called\n>> Payment::setFee() called\n>> customers[c++] executed'
-        );
+// Helper — generate unique suggestions
+function getSuggestions(name, type) {
+    const clean = name.replace(/[^a-zA-Z]/g, '');
+    const suggestions = [];
+    const options = [
+        clean + '_1',
+        clean + '_pro',
+        clean + '2025',
+        'The_' + clean,
+        clean + '_gym'
+    ];
+    for(let i = 0; i < options.length; i++) {
+        if(!nameExists(options[i], type)) {
+            suggestions.push(options[i]);
+        }
+        if(suggestions.length === 3) break;
+    }
+    return suggestions;
+}
 
+async function registerCustomer() {
+    const name = document.getElementById('c-name').value.trim();
+    const age = document.getElementById('c-age').value;
+    const fee = document.getElementById('c-fee').value;
+
+    // Empty check
+    if(!name || !age || !fee) {
+        showMsg('c-msg', '⚠️ Please fill all fields!', false);
+        return;
+    }
+
+    // Age check
+    if(age < 15 || age > 60) {
+        showMsg('c-msg', '⚠️ Age must be between 15 and 60!', false);
+        return;
+    }
+
+    // Fee check
+    if(fee <= 0) {
+        showMsg('c-msg', '⚠️ Fee must be greater than 0!', false);
+        return;
+    }
+
+    function getSuggestions(name, type) {
+    const suggestions = [];
+    const options = [
+        name + '_1',
+        name + '_2', 
+        name + '_3',
+        name + '123',
+        name + '_new'
+    ];
+    for(let i = 0; i < options.length; i++) {
+        if(!nameExists(options[i], type)) {
+            suggestions.push(options[i]);
+        }
+        if(suggestions.length === 3) break;
+    }
+    return suggestions;
+}
+
+    // Duplicate name check
+    if(nameExists(name, 'customer')) {
+        const suggestions = getSuggestions(name, 'customer');
+        let suggestHTML = `<div style="margin-top:8px; color:#ff6600;">
+            ⚠️ "<b>${name}</b>" is already registered!<br>
+            Try one of these instead:<br>`;
+        suggestions.forEach(s => {
+            suggestHTML += `<span onclick="document.getElementById('c-name').value='${s}'" 
+                style="cursor:pointer; color:#00aaff; margin-right:10px; 
+                text-decoration:underline;">👤 ${s}</span>`;
+        });
+        suggestHTML += `</div>`;
+        document.getElementById('c-msg').innerHTML = suggestHTML;
+        document.getElementById('c-msg').className = 'msg error';
+        return;
+    }
+
+    // Button disable
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerText = 'Registering...';
+
+    updateLog('api-log',
+        'POST /register/customer',
+        '>> Customer::setData() called\n>> Payment::setFee() called\n>> customers[c++] executed'
+    );
+
+    try {
         const res = await fetch(API + "/register/customer", {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: `name=${name}&age=${age}&fee=${fee}`
         });
         const text = await res.text();
-        showMsg('c-msg', text, true);
+        showMsg('c-msg', '✅ ' + text, true);
+
+        // Save name so it cant be used again
+        saveName(name, 'customer');
+
+        // Clear form
+        document.getElementById('c-name').value = '';
+        document.getElementById('c-age').value = '';
+        document.getElementById('c-fee').value = '';
+
+    } catch(err) {
+        showMsg('c-msg', '❌ Server not reachable!', false);
     }
+
+    btn.disabled = false;
+    btn.innerText = 'Register Customer';
+}
 
     async function registerTrainer() {
         const name = document.getElementById('t-name').value;
