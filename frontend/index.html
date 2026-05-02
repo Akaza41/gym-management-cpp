@@ -2,408 +2,1263 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Gym Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitCore — Gym Management System</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #0a0a1a; color: white; }
-        
-        .navbar { background: #111; padding: 15px 30px; display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #00aaff; }
-        .navbar h1 { color: #00aaff; font-size: 22px; }
-        .navbar button { background: #00aaff; color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-size: 14px; }
-        .navbar button:hover { background: #0088cc; }
-        .navbar button.active { background: #ff6600; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        .container { padding: 30px; }
-        .section { display: none; }
+        :root {
+            --bg: #080b14;
+            --surface: #0e1320;
+            --surface2: #141926;
+            --border: #1e2840;
+            --accent: #4f8ef7;
+            --accent2: #7c5ff5;
+            --green: #22c55e;
+            --orange: #f97316;
+            --red: #ef4444;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --card: #111827;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .navbar-brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-brand span {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 400;
+            display: block;
+            margin-top: -4px;
+            -webkit-text-fill-color: var(--muted);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--muted);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-btn:hover { color: var(--text); background: var(--surface2); }
+        .nav-btn:hover::after { width: 60%; }
+
+        .nav-btn.active {
+            color: var(--accent);
+            background: rgba(79, 142, 247, 0.1);
+        }
+
+        .nav-btn.active::after { width: 60%; }
+
+        .nav-badge {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ===== LAYOUT ===== */
+        .main {
+            flex: 1;
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section { display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
 
-        h2 { color: #00aaff; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .form-box { background: #111; padding: 25px; border-radius: 10px; max-width: 500px; border: 1px solid #333; }
-        .form-box input, .form-box select { width: 100%; padding: 10px; margin: 8px 0; background: #1a1a2e; border: 1px solid #333; color: white; border-radius: 5px; font-size: 14px; }
-        .form-box button { width: 100%; padding: 12px; background: #00aaff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .form-box button:hover { background: #0088cc; }
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            margin-bottom: 28px;
+        }
 
-        .log-box { background: #0d1117; border: 1px solid #00aaff; border-radius: 8px; padding: 15px; margin-top: 20px; max-width: 500px; }
-        .log-box h4 { color: #00aaff; margin-bottom: 10px; }
-        .log-box pre { color: #00ff88; font-size: 13px; white-space: pre-wrap; }
+        .page-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #00aaff; color: white; padding: 10px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #333; color: #ccc; }
-        tr:hover { background: #1a1a2e; }
+        .page-header p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
 
-        .msg { padding: 10px; border-radius: 5px; margin-top: 10px; max-width: 500px; }
-        .msg.success { background: #003300; color: #00ff88; border: 1px solid #00ff88; }
-        .msg.error { background: #330000; color: #ff4444; border: 1px solid #ff4444; }
+        /* ===== STATS CARDS ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
 
-        .tab-btns { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btns button { padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; background: #333; color: white; }
-        .tab-btns button.active { background: #00aaff; }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue { background: rgba(79, 142, 247, 0.15); }
+        .stat-icon.purple { background: rgba(124, 95, 245, 0.15); }
+        .stat-icon.green { background: rgba(34, 197, 94, 0.15); }
+
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-info p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* ===== TAB SWITCHER ===== */
+        .tab-switcher {
+            display: flex;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--muted);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn:hover { color: var(--text); }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 142, 247, 0.3);
+        }
+
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 520px;
+        }
+
+        .form-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .form-card .form-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 9px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.1);
+        }
+
+        .form-group select option { background: var(--surface2); }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(79, 142, 247, 0.3);
+        }
+
+        .submit-btn:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 142, 247, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== MESSAGES ===== */
+        .msg {
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin-top: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .msg.show { display: block; animation: fadeIn 0.2s ease; }
+
+        .msg.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .msg.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .suggestions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .suggest-chip {
+            background: rgba(79, 142, 247, 0.1);
+            border: 1px solid rgba(79, 142, 247, 0.3);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggest-chip:hover {
+            background: rgba(79, 142, 247, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* ===== LOG BOX ===== */
+        .log-card {
+            background: #060a10;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 24px;
+            max-width: 520px;
+        }
+
+        .log-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .log-header h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .log-card pre {
+            color: #4ade80;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        /* ===== TABLE ===== */
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-card-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .record-count {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background: var(--surface2);
+        }
+
+        th {
+            padding: 13px 20px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 20px;
+            font-size: 13px;
+            color: var(--text);
+            border-bottom: 1px solid rgba(30, 40, 64, 0.5);
+        }
+
+        tbody tr {
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover { background: var(--surface2); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.paid {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-badge.pending {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--orange);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        /* ===== PAY SECTION ===== */
+        .pay-layout {
+            display: grid;
+            grid-template-columns: 520px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .pay-info-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .pay-info-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pay-tip {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(79, 142, 247, 0.05);
+            border: 1px solid rgba(79, 142, 247, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .pay-tip .tip-icon { font-size: 16px; }
+        .pay-tip p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+        /* ===== REGISTER LAYOUT ===== */
+        .register-layout {
+            display: grid;
+            grid-template-columns: 520px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
     </style>
 </head>
 <body>
 
-<div class="navbar">
-    <h1>🏋️ Gym Management System</h1>
-    <button onclick="showSection('register')" id="btn-register">Register</button>
-    <button onclick="showSection('view')" id="btn-view">View</button>
-    <button onclick="showSection('pay')" id="btn-pay">Pay</button>
-</div>
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        <div class="logo-icon">🏋️</div>
+        <div>
+            <h1>FitCore</h1>
+            <span>Gym Management System</span>
+        </div>
+    </div>
+    <div class="nav-links">
+        <button class="nav-btn active" id="nav-register" onclick="showSection('register')">
+            ➕ Register
+        </button>
+        <button class="nav-btn" id="nav-view" onclick="showSection('view')">
+            📋 Records
+        </button>
+        <button class="nav-btn" id="nav-pay" onclick="showSection('pay')">
+            💳 Payments
+        </button>
+    </div>
+    <div class="nav-badge">
+        <div class="status-dot"></div>
+        Server Online
+    </div>
+</nav>
 
-<div class="container">
+<!-- MAIN -->
+<div class="main">
 
-    <!-- REGISTER SECTION -->
+    <!-- ===== REGISTER SECTION ===== -->
     <div class="section active" id="register">
-        <h2>Register</h2>
-        <div class="tab-btns">
-            <button class="active" onclick="showForm('customer')">Customer</button>
-            <button onclick="showForm('trainer')">Trainer</button>
-            <button onclick="showForm('staff')">Staff</button>
+        <div class="page-header">
+            <h2>Register Member</h2>
+            <p>Add new customers, trainers, and staff to the system</p>
         </div>
 
-        <!-- Customer Form -->
-        <div class="form-box" id="form-customer">
-            <h3 style="margin-bottom:15px; color:#ccc;">Customer Registration</h3>
-            <input type="text" id="c-name" placeholder="Full Name">
-            <input type="number" id="c-age" placeholder="Age (15-60)">
-            <input type="number" id="c-fee" placeholder="Monthly Fee">
-            <button onclick="registerCustomer()">Register Customer</button>
-            <div id="c-msg"></div>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon blue">👤</div>
+                <div class="stat-info">
+                    <h3 id="stat-customers">0</h3>
+                    <p>Total Customers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">💪</div>
+                <div class="stat-info">
+                    <h3 id="stat-trainers">0</h3>
+                    <p>Total Trainers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">🧑‍💼</div>
+                <div class="stat-info">
+                    <h3 id="stat-staff">0</h3>
+                    <p>Total Staff</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Trainer Form -->
-        <div class="form-box" id="form-trainer" style="display:none;">
-            <h3 style="margin-bottom:15px; color:#ccc;">Trainer Registration</h3>
-            <input type="text" id="t-name" placeholder="Full Name">
-            <input type="number" id="t-age" placeholder="Age (20-50)">
-            <select id="t-specialty">
-                <option value="Strength">Strength</option>
-                <option value="Cardio">Cardio</option>
-                <option value="Yoga">Yoga</option>
-                <option value="Bodybuilding">Bodybuilding</option>
-            </select>
-            <input type="number" id="t-salary" placeholder="Monthly Salary">
-            <button onclick="registerTrainer()">Register Trainer</button>
-            <div id="t-msg"></div>
+        <div class="tab-switcher">
+            <button class="tab-btn active" id="tab-customer" onclick="showForm('customer')">👤 Customer</button>
+            <button class="tab-btn" id="tab-trainer" onclick="showForm('trainer')">💪 Trainer</button>
+            <button class="tab-btn" id="tab-staff" onclick="showForm('staff')">🧑‍💼 Staff</button>
         </div>
 
-        <!-- Staff Form -->
-        <div class="form-box" id="form-staff" style="display:none;">
-            <h3 style="margin-bottom:15px; color:#ccc;">Staff Registration</h3>
-            <input type="text" id="s-name" placeholder="Full Name">
-            <input type="number" id="s-age" placeholder="Age (18-60)">
-            <select id="s-role">
-                <option value="Receptionist">Receptionist</option>
-                <option value="Cleaner">Cleaner</option>
-                <option value="Security">Security</option>
-                <option value="Manager">Manager</option>
-            </select>
-            <input type="number" id="s-salary" placeholder="Monthly Salary">
-            <button onclick="registerStaff()">Register Staff</button>
-            <div id="s-msg"></div>
-        </div>
+        <div class="register-layout">
+            <div>
+                <!-- Customer Form -->
+                <div class="form-card" id="form-customer">
+                    <h3>Customer Registration</h3>
+                    <p class="form-subtitle">Register a new gym member with their fee plan</p>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="c-name" placeholder="e.g. Ali Hassan">
+                    </div>
+                    <div class="form-group">
+                        <label>Age (15 – 60)</label>
+                        <input type="number" id="c-age" placeholder="Enter age" min="15" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Fee (PKR)</label>
+                        <input type="number" id="c-fee" placeholder="e.g. 5000" min="1">
+                    </div>
+                    <button class="submit-btn" id="c-btn" onclick="registerCustomer()">Register Customer</button>
+                    <div class="msg" id="c-msg"></div>
+                </div>
 
-        <!-- API Log Box -->
-        <div class="log-box" style="margin-top:20px;">
-            <h4>🖥️ C++ Console Log (API Calls)</h4>
-            <pre id="api-log">Waiting for API call...</pre>
+                <!-- Trainer Form -->
+                <div class="form-card" id="form-trainer" style="display:none;">
+                    <h3>Trainer Registration</h3>
+                    <p class="form-subtitle">Add a new trainer with their specialty and salary</p>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="t-name" placeholder="e.g. Usman Khan">
+                    </div>
+                    <div class="form-group">
+                        <label>Age (20 – 50)</label>
+                        <input type="number" id="t-age" placeholder="Enter age" min="20" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Specialty</label>
+                        <select id="t-specialty">
+                            <option value="Strength">Strength Training</option>
+                            <option value="Cardio">Cardio & Endurance</option>
+                            <option value="Yoga">Yoga & Flexibility</option>
+                            <option value="Bodybuilding">Bodybuilding</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Salary (PKR)</label>
+                        <input type="number" id="t-salary" placeholder="e.g. 35000" min="1">
+                    </div>
+                    <button class="submit-btn" id="t-btn" onclick="registerTrainer()">Register Trainer</button>
+                    <div class="msg" id="t-msg"></div>
+                </div>
+
+                <!-- Staff Form -->
+                <div class="form-card" id="form-staff" style="display:none;">
+                    <h3>Staff Registration</h3>
+                    <p class="form-subtitle">Register a new staff member with their role</p>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="s-name" placeholder="e.g. Sara Ahmed">
+                    </div>
+                    <div class="form-group">
+                        <label>Age (18 – 60)</label>
+                        <input type="number" id="s-age" placeholder="Enter age" min="18" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="s-role">
+                            <option value="Receptionist">Receptionist</option>
+                            <option value="Cleaner">Cleaner</option>
+                            <option value="Security">Security Guard</option>
+                            <option value="Manager">Manager</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Salary (PKR)</label>
+                        <input type="number" id="s-salary" placeholder="e.g. 25000" min="1">
+                    </div>
+                    <button class="submit-btn" id="s-btn" onclick="registerStaff()">Register Staff</button>
+                    <div class="msg" id="s-msg"></div>
+                </div>
+            </div>
+
+            <!-- Log Box -->
+            <div class="log-card">
+                <div class="log-header">
+                    <div class="log-dot"></div>
+                    <h4>C++ Console Output</h4>
+                </div>
+                <pre id="api-log">// Waiting for API call...
+// C++ functions will appear here</pre>
+            </div>
         </div>
     </div>
 
-    <!-- VIEW SECTION -->
+    <!-- ===== VIEW SECTION ===== -->
     <div class="section" id="view">
-        <h2>View Records</h2>
-        <div class="tab-btns">
-            <button class="active" onclick="viewData('customers')">Customers</button>
-            <button onclick="viewData('trainers')">Trainers</button>
-            <button onclick="viewData('staff')">Staff</button>
+        <div class="page-header">
+            <h2>View Records</h2>
+            <p>Browse all registered members, trainers, and staff</p>
         </div>
-        <div id="view-table"></div>
+
+        <div class="tab-switcher">
+            <button class="tab-btn active" id="vtab-customers" onclick="viewData('customers')">👤 Customers</button>
+            <button class="tab-btn" id="vtab-trainers" onclick="viewData('trainers')">💪 Trainers</button>
+            <button class="tab-btn" id="vtab-staff" onclick="viewData('staff')">🧑‍💼 Staff</button>
+        </div>
+
+        <div class="table-card">
+            <div class="table-card-header">
+                <h3 id="view-title">Customers</h3>
+                <div class="record-count" id="record-count">0 records</div>
+            </div>
+            <div id="view-table"></div>
+        </div>
     </div>
 
-    <!-- PAY SECTION -->
+    <!-- ===== PAY SECTION ===== -->
     <div class="section" id="pay">
-        <h2>Process Payment</h2>
-        <div class="tab-btns">
-            <button class="active" onclick="showPayForm('customer')">Customer Fee</button>
-            <button onclick="showPayForm('trainer')">Trainer Salary</button>
-            <button onclick="showPayForm('staff')">Staff Salary</button>
+        <div class="page-header">
+            <h2>Process Payment</h2>
+            <p>Handle customer fees and staff/trainer salary payments</p>
         </div>
 
-        <div class="form-box" id="pay-form">
-            <input type="number" id="pay-id" placeholder="Enter ID">
-            <input type="number" id="pay-amount" placeholder="Enter Amount">
-            <button onclick="processPayment()">Pay Now</button>
-            <div id="pay-msg"></div>
+        <div class="tab-switcher">
+            <button class="tab-btn active" id="ptab-customer" onclick="showPayForm('customer')">👤 Customer Fee</button>
+            <button class="tab-btn" id="ptab-trainer" onclick="showPayForm('trainer')">💪 Trainer Salary</button>
+            <button class="tab-btn" id="ptab-staff" onclick="showPayForm('staff')">🧑‍💼 Staff Salary</button>
         </div>
 
-        <div class="log-box" style="margin-top:20px;">
-            <h4>🖥️ C++ Console Log (API Calls)</h4>
-            <pre id="pay-log">Waiting for payment...</pre>
+        <div class="pay-layout">
+            <div class="form-card">
+                <h3 id="pay-title">Customer Fee Payment</h3>
+                <p class="form-subtitle" id="pay-subtitle">Enter the customer ID and amount to process payment</p>
+                <div class="form-group">
+                    <label id="pay-id-label">Customer ID</label>
+                    <input type="number" id="pay-id" placeholder="e.g. 101">
+                </div>
+                <div class="form-group">
+                    <label>Amount (PKR)</label>
+                    <input type="number" id="pay-amount" placeholder="Enter amount to pay" min="1">
+                </div>
+                <button class="submit-btn" id="pay-btn" onclick="processPayment()">💳 Process Payment</button>
+                <div class="msg" id="pay-msg"></div>
+
+                <div class="log-card" style="margin-top:20px; background:#060a10;">
+                    <div class="log-header">
+                        <div class="log-dot"></div>
+                        <h4>C++ Console Output</h4>
+                    </div>
+                    <pre id="pay-log">// Waiting for payment...
+// C++ functions will appear here</pre>
+                </div>
+            </div>
+
+            <div>
+                <div class="pay-info-card">
+                    <h3>How to Pay</h3>
+                    <div class="pay-tip">
+                        <div class="tip-icon">1️⃣</div>
+                        <p>Go to <b>Records</b> tab and note the ID of the person you want to pay for</p>
+                    </div>
+                    <div class="pay-tip">
+                        <div class="tip-icon">2️⃣</div>
+                        <p>Select the correct tab — <b>Customer Fee</b>, <b>Trainer Salary</b>, or <b>Staff Salary</b></p>
+                    </div>
+                    <div class="pay-tip">
+                        <div class="tip-icon">3️⃣</div>
+                        <p>Enter the <b>ID</b> and the <b>amount</b> to pay, then click Process Payment</p>
+                    </div>
+                    <div class="pay-tip">
+                        <div class="tip-icon">✅</div>
+                        <p>Status changes to <b style="color:var(--green)">PAID</b> when remaining amount reaches zero</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
 </div>
 
 <script>
-    const API = "https://venomous-substance-wobble.ngrok-free.dev";
+    const API = "http://localhost:8080";
     let currentPayType = "customer";
+    let customerCount = 0, trainerCount = 0, staffCount = 0;
 
+    // ===== SECTION SWITCHING =====
     function showSection(name) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(name).classList.add('active');
+        document.getElementById('nav-' + name).classList.add('active');
         if(name === 'view') viewData('customers');
+        if(name === 'register') updateStats();
     }
 
+    // ===== FORM TAB SWITCHING =====
     function showForm(type) {
-        document.getElementById('form-customer').style.display = 'none';
-        document.getElementById('form-trainer').style.display = 'none';
-        document.getElementById('form-staff').style.display = 'none';
+        ['customer','trainer','staff'].forEach(t => {
+            document.getElementById('form-' + t).style.display = 'none';
+            document.getElementById('tab-' + t).classList.remove('active');
+        });
         document.getElementById('form-' + type).style.display = 'block';
+        document.getElementById('tab-' + type).classList.add('active');
     }
 
+    // ===== PAY FORM SWITCHING =====
     function showPayForm(type) {
         currentPayType = type;
-        document.getElementById('pay-id').placeholder = "Enter " + type + " ID";
+        ['customer','trainer','staff'].forEach(t => {
+            document.getElementById('ptab-' + t).classList.remove('active');
+        });
+        document.getElementById('ptab-' + type).classList.add('active');
+
+        const titles = {
+            customer: ['Customer Fee Payment', 'Enter the customer ID and amount to process payment', 'Customer ID'],
+            trainer:  ['Trainer Salary Payment', 'Enter the trainer ID and salary amount to process', 'Trainer ID'],
+            staff:    ['Staff Salary Payment', 'Enter the staff ID and salary amount to process', 'Staff ID']
+        };
+        document.getElementById('pay-title').innerText = titles[type][0];
+        document.getElementById('pay-subtitle').innerText = titles[type][1];
+        document.getElementById('pay-id-label').innerText = titles[type][2];
+        document.getElementById('pay-id').placeholder = 'e.g. ' + (type==='customer'?'101':type==='trainer'?'201':'301');
+        document.getElementById('pay-msg').className = 'msg';
+        document.getElementById('pay-msg').style.display = 'none';
     }
 
+    // ===== MSG DISPLAY =====
     function showMsg(id, text, success) {
         const el = document.getElementById(id);
-        el.className = 'msg ' + (success ? 'success' : 'error');
-        el.innerText = text;
+        el.className = 'msg show ' + (success ? 'success' : 'error');
+        el.innerHTML = text;
     }
 
     function updateLog(logId, apiCall, cppLines) {
         document.getElementById(logId).innerText =
-            "[API CALL] " + apiCall + "\n" + cppLines;
+            '[API CALL] ' + apiCall + '\n' + cppLines;
     }
 
-    // Helper — check if name already exists
-function nameExists(name, type) {
-    const key = type + '_names';
-    const names = JSON.parse(localStorage.getItem(key) || '[]');
-    return names.includes(name.toLowerCase());
-}
-
-// Helper — save name to local list
-function saveName(name, type) {
-    const key = type + '_names';
-    const names = JSON.parse(localStorage.getItem(key) || '[]');
-    names.push(name.toLowerCase());
-    localStorage.setItem(key, JSON.stringify(names));
-}
-
-// Helper — generate unique suggestions
-function getSuggestions(name, type) {
-    const clean = name.replace(/[^a-zA-Z]/g, '');
-    const suggestions = [];
-    const options = [
-        clean + '_1',
-        clean + '_pro',
-        clean + '2025',
-        'The_' + clean,
-        clean + '_gym'
-    ];
-    for(let i = 0; i < options.length; i++) {
-        if(!nameExists(options[i], type)) {
-            suggestions.push(options[i]);
-        }
-        if(suggestions.length === 3) break;
-    }
-    return suggestions;
-}
-
-async function registerCustomer() {
-    const name = document.getElementById('c-name').value.trim();
-    const age = document.getElementById('c-age').value;
-    const fee = document.getElementById('c-fee').value;
-
-    // Empty check
-    if(!name || !age || !fee) {
-        showMsg('c-msg', '⚠️ Please fill all fields!', false);
-        return;
+    // ===== STATS =====
+    function updateStats() {
+        fetch(API + '/stats').then(r => r.text()).then(text => {
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                if(line.includes('Total Customers:')) {
+                    const n = parseInt(line.split(':')[1].trim());
+                    document.getElementById('stat-customers').innerText = n;
+                    customerCount = n;
+                }
+                if(line.includes('Total Trainers:')) {
+                    const n = parseInt(line.split(':')[1].trim());
+                    document.getElementById('stat-trainers').innerText = n;
+                    trainerCount = n;
+                }
+                if(line.includes('Total Staff:')) {
+                    const n = parseInt(line.split(':')[1].trim());
+                    document.getElementById('stat-staff').innerText = n;
+                    staffCount = n;
+                }
+            });
+        }).catch(() => {});
     }
 
-    // Age check
-    if(age < 15 || age > 60) {
-        showMsg('c-msg', '⚠️ Age must be between 15 and 60!', false);
-        return;
+    // ===== NAME HELPERS =====
+    function nameExists(name, type) {
+        const names = JSON.parse(localStorage.getItem(type + '_names') || '[]');
+        return names.includes(name.toLowerCase().trim());
     }
 
-    // Fee check
-    if(fee <= 0) {
-        showMsg('c-msg', '⚠️ Fee must be greater than 0!', false);
-        return;
+    function saveName(name, type) {
+        const names = JSON.parse(localStorage.getItem(type + '_names') || '[]');
+        names.push(name.toLowerCase().trim());
+        localStorage.setItem(type + '_names', JSON.stringify(names));
     }
 
     function getSuggestions(name, type) {
-    const suggestions = [];
-    const options = [
-        name + '_1',
-        name + '_2', 
-        name + '_3',
-        name + '123',
-        name + '_new'
-    ];
-    for(let i = 0; i < options.length; i++) {
-        if(!nameExists(options[i], type)) {
-            suggestions.push(options[i]);
+        const suggestions = [];
+        const options = [name+'_1', name+'_2', name+'_3', name+'123', name+'_new'];
+        for(let i = 0; i < options.length; i++) {
+            if(!nameExists(options[i], type)) suggestions.push(options[i]);
+            if(suggestions.length === 3) break;
         }
-        if(suggestions.length === 3) break;
+        return suggestions;
     }
-    return suggestions;
-}
 
-    // Duplicate name check
-    if(nameExists(name, 'customer')) {
-        const suggestions = getSuggestions(name, 'customer');
-        let suggestHTML = `<div style="margin-top:8px; color:#ff6600;">
-            ⚠️ "<b>${name}</b>" is already registered!<br>
-            Try one of these instead:<br>`;
+    function showDuplicateError(msgId, name, type, fieldId) {
+        const suggestions = getSuggestions(name, type);
+        let html = `⚠️ "<b>${name}</b>" is already registered! Try:<br><div class="suggestions">`;
         suggestions.forEach(s => {
-            suggestHTML += `<span onclick="document.getElementById('c-name').value='${s}'" 
-                style="cursor:pointer; color:#00aaff; margin-right:10px; 
-                text-decoration:underline;">👤 ${s}</span>`;
+            html += `<span class="suggest-chip" onclick="document.getElementById('${fieldId}').value='${s}';this.parentElement.parentElement.parentElement.style.display='none';">👤 ${s}</span>`;
         });
-        suggestHTML += `</div>`;
-        document.getElementById('c-msg').innerHTML = suggestHTML;
-        document.getElementById('c-msg').className = 'msg error';
-        return;
+        html += `</div>`;
+        showMsg(msgId, html, false);
     }
 
-    // Button disable
-    const btn = event.target;
-    btn.disabled = true;
-    btn.innerText = 'Registering...';
+    // ===== REGISTER CUSTOMER =====
+    async function registerCustomer() {
+        const name = document.getElementById('c-name').value.trim();
+        const age = document.getElementById('c-age').value;
+        const fee = document.getElementById('c-fee').value;
 
-    updateLog('api-log',
-        'POST /register/customer',
-        '>> Customer::setData() called\n>> Payment::setFee() called\n>> customers[c++] executed'
-    );
+        if(!name || !age || !fee) { showMsg('c-msg', '⚠️ Please fill all fields!', false); return; }
+        if(age < 15 || age > 60) { showMsg('c-msg', '⚠️ Age must be between 15 and 60!', false); return; }
+        if(fee <= 0) { showMsg('c-msg', '⚠️ Fee must be greater than 0!', false); return; }
 
-    try {
-        const res = await fetch(API + "/register/customer", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: `name=${name}&age=${age}&fee=${fee}`
-        });
-        const text = await res.text();
-        showMsg('c-msg', '✅ ' + text, true);
+        if(nameExists(name, 'customer')) {
+            showDuplicateError('c-msg', name, 'customer', 'c-name');
+            return;
+        }
 
-        // Save name so it cant be used again
-        saveName(name, 'customer');
+        const btn = document.getElementById('c-btn');
+        btn.disabled = true;
+        btn.innerText = 'Registering...';
 
-        // Clear form
-        document.getElementById('c-name').value = '';
-        document.getElementById('c-age').value = '';
-        document.getElementById('c-fee').value = '';
+        updateLog('api-log',
+            'POST /register/customer',
+            '>> Customer::setData() called\n>> Payment::setFee(' + fee + ') called\n>> customers[c++] stored\n>> Customer::showStats() called'
+        );
 
-    } catch(err) {
-        showMsg('c-msg', '❌ Server not reachable!', false);
+        try {
+            const res = await fetch(API + '/register/customer', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `name=${encodeURIComponent(name)}&age=${age}&fee=${fee}`
+            });
+            const text = await res.text();
+            showMsg('c-msg', '✅ ' + text, true);
+            saveName(name, 'customer');
+            document.getElementById('c-name').value = '';
+            document.getElementById('c-age').value = '';
+            document.getElementById('c-fee').value = '';
+            updateStats();
+        } catch(err) {
+            showMsg('c-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
+        }
+
+        btn.disabled = false;
+        btn.innerText = 'Register Customer';
     }
 
-    btn.disabled = false;
-    btn.innerText = 'Register Customer';
-}
-
+    // ===== REGISTER TRAINER =====
     async function registerTrainer() {
-        const name = document.getElementById('t-name').value;
+        const name = document.getElementById('t-name').value.trim();
         const age = document.getElementById('t-age').value;
         const specialty = document.getElementById('t-specialty').value;
         const salary = document.getElementById('t-salary').value;
 
-        if(!name || !age || !salary) { showMsg('t-msg', 'Fill all fields!', false); return; }
+        if(!name || !age || !salary) { showMsg('t-msg', '⚠️ Please fill all fields!', false); return; }
+        if(age < 20 || age > 50) { showMsg('t-msg', '⚠️ Age must be between 20 and 50!', false); return; }
+        if(salary <= 0) { showMsg('t-msg', '⚠️ Salary must be greater than 0!', false); return; }
+
+        if(nameExists(name, 'trainer')) {
+            showDuplicateError('t-msg', name, 'trainer', 't-name');
+            return;
+        }
+
+        const btn = document.getElementById('t-btn');
+        btn.disabled = true;
+        btn.innerText = 'Registering...';
 
         updateLog('api-log',
             'POST /register/trainer',
-            '>> Trainer::setData() called\n>> Payment::setFee() called\n>> trainers[t++] executed'
+            '>> Trainer::setData() called\n>> Payment::setFee(' + salary + ') called\n>> trainers[t++] stored\n>> Trainer::showStats() called'
         );
 
-        const res = await fetch(API + "/register/trainer", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: `name=${name}&age=${age}&specialty=${specialty}&salary=${salary}`
-        });
-        const text = await res.text();
-        showMsg('t-msg', text, true);
+        try {
+            const res = await fetch(API + '/register/trainer', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `name=${encodeURIComponent(name)}&age=${age}&specialty=${specialty}&salary=${salary}`
+            });
+            const text = await res.text();
+            showMsg('t-msg', '✅ ' + text, true);
+            saveName(name, 'trainer');
+            document.getElementById('t-name').value = '';
+            document.getElementById('t-age').value = '';
+            document.getElementById('t-salary').value = '';
+            updateStats();
+        } catch(err) {
+            showMsg('t-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
+        }
+
+        btn.disabled = false;
+        btn.innerText = 'Register Trainer';
     }
 
+    // ===== REGISTER STAFF =====
     async function registerStaff() {
-        const name = document.getElementById('s-name').value;
+        const name = document.getElementById('s-name').value.trim();
         const age = document.getElementById('s-age').value;
         const role = document.getElementById('s-role').value;
         const salary = document.getElementById('s-salary').value;
 
-        if(!name || !age || !salary) { showMsg('s-msg', 'Fill all fields!', false); return; }
+        if(!name || !age || !salary) { showMsg('s-msg', '⚠️ Please fill all fields!', false); return; }
+        if(age < 18 || age > 60) { showMsg('s-msg', '⚠️ Age must be between 18 and 60!', false); return; }
+        if(salary <= 0) { showMsg('s-msg', '⚠️ Salary must be greater than 0!', false); return; }
+
+        if(nameExists(name, 'staff')) {
+            showDuplicateError('s-msg', name, 'staff', 's-name');
+            return;
+        }
+
+        const btn = document.getElementById('s-btn');
+        btn.disabled = true;
+        btn.innerText = 'Registering...';
 
         updateLog('api-log',
             'POST /register/staff',
-            '>> Staff::setData() called\n>> Payment::setFee() called\n>> staffs[s++] executed'
+            '>> Staff::setData() called\n>> Payment::setFee(' + salary + ') called\n>> staffs[s++] stored\n>> Staff::showStats() called'
         );
 
-        const res = await fetch(API + "/register/staff", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: `name=${name}&age=${age}&role=${role}&salary=${salary}`
-        });
-        const text = await res.text();
-        showMsg('s-msg', text, true);
-    }
-
-    async function viewData(type) {
-        const res = await fetch(API + "/view/" + type);
-        const text = await res.text();
-
-        let html = '';
-        if(text === 'EMPTY') {
-            html = '<p style="color:#888; margin-top:10px;">No records found.</p>';
-        } else if(type === 'customers') {
-            html = '<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Total Fee</th><th>Remaining</th><th>Status</th></tr>';
-            text.trim().split('\n').forEach(row => {
-                const d = row.split(',');
-                html += `<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${parseFloat(d[3]).toFixed(0)}</td><td>${parseFloat(d[4]).toFixed(0)}</td><td style="color:${d[5]==='PAID'?'#00ff88':'#ff6600'}">${d[5]}</td></tr>`;
+        try {
+            const res = await fetch(API + '/register/staff', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `name=${encodeURIComponent(name)}&age=${age}&role=${role}&salary=${salary}`
             });
-            html += '</table>';
-        } else if(type === 'trainers') {
-            html = '<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Specialty</th><th>Total Salary</th><th>Remaining</th><th>Status</th></tr>';
-            text.trim().split('\n').forEach(row => {
-                const d = row.split(',');
-                html += `<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${d[3]}</td><td>${parseFloat(d[4]).toFixed(0)}</td><td>${parseFloat(d[5]).toFixed(0)}</td><td style="color:${d[6]==='PAID'?'#00ff88':'#ff6600'}">${d[6]}</td></tr>`;
-            });
-            html += '</table>';
-        } else if(type === 'staff') {
-            html = '<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Role</th><th>Total Salary</th><th>Remaining</th><th>Status</th></tr>';
-            text.trim().split('\n').forEach(row => {
-                const d = row.split(',');
-                html += `<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${d[3]}</td><td>${parseFloat(d[4]).toFixed(0)}</td><td>${parseFloat(d[5]).toFixed(0)}</td><td style="color:${d[6]==='PAID'?'#00ff88':'#ff6600'}">${d[6]}</td></tr>`;
-            });
-            html += '</table>';
+            const text = await res.text();
+            showMsg('s-msg', '✅ ' + text, true);
+            saveName(name, 'staff');
+            document.getElementById('s-name').value = '';
+            document.getElementById('s-age').value = '';
+            document.getElementById('s-salary').value = '';
+            updateStats();
+        } catch(err) {
+            showMsg('s-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
         }
 
-        document.getElementById('view-table').innerHTML = html;
+        btn.disabled = false;
+        btn.innerText = 'Register Staff';
     }
 
+    // ===== VIEW DATA =====
+    async function viewData(type) {
+        ['customers','trainers','staff'].forEach(t => {
+            document.getElementById('vtab-' + t).classList.remove('active');
+        });
+        document.getElementById('vtab-' + type).classList.add('active');
+
+        const titles = { customers: 'Customers', trainers: 'Trainers', staff: 'Staff Members' };
+        document.getElementById('view-title').innerText = titles[type];
+
+        try {
+            const res = await fetch(API + '/view/' + type);
+            const text = await res.text();
+
+            if(text.trim() === 'EMPTY' || text.trim() === '') {
+                document.getElementById('record-count').innerText = '0 records';
+                if(type === 'customers') {
+                    document.getElementById('view-table').innerHTML = `
+                        <table><thead><tr>
+                            <th>ID</th><th>Name</th><th>Age</th>
+                            <th>Total Fee</th><th>Remaining</th><th>Status</th>
+                        </tr></thead></table>
+                        <div class="empty-state">
+                            <div class="empty-icon">👤</div>
+                            <p>No customers registered yet. Go to Register tab to add one.</p>
+                        </div>`;
+                } else if(type === 'trainers') {
+                    document.getElementById('view-table').innerHTML = `
+                        <table><thead><tr>
+                            <th>ID</th><th>Name</th><th>Age</th>
+                            <th>Specialty</th><th>Total Salary</th><th>Remaining</th><th>Status</th>
+                        </tr></thead></table>
+                        <div class="empty-state">
+                            <div class="empty-icon">💪</div>
+                            <p>No trainers registered yet. Go to Register tab to add one.</p>
+                        </div>`;
+                } else {
+                    document.getElementById('view-table').innerHTML = `
+                        <table><thead><tr>
+                            <th>ID</th><th>Name</th><th>Age</th>
+                            <th>Role</th><th>Total Salary</th><th>Remaining</th><th>Status</th>
+                        </tr></thead></table>
+                        <div class="empty-state">
+                            <div class="empty-icon">🧑‍💼</div>
+                            <p>No staff registered yet. Go to Register tab to add one.</p>
+                        </div>`;
+                }
+                return;
+            }
+
+            const rows = text.trim().split('\n').filter(r => r.trim() !== '');
+            document.getElementById('record-count').innerText = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
+
+            let html = '<table>';
+
+            if(type === 'customers') {
+                html += `<thead><tr>
+                    <th>ID</th><th>Name</th><th>Age</th>
+                    <th>Total Fee</th><th>Remaining</th><th>Status</th>
+                </tr></thead><tbody>`;
+                rows.forEach(row => {
+                    const d = row.split('|');
+                    if(d.length < 6) return;
+                    const status = d[5].trim();
+                    html += `<tr>
+                        <td><code style="color:var(--accent);font-size:12px">#${d[0]}</code></td>
+                        <td><b>${d[1]}</b></td>
+                        <td>${d[2]}</td>
+                        <td>PKR ${parseInt(d[3]).toLocaleString()}</td>
+                        <td>PKR ${parseInt(d[4]).toLocaleString()}</td>
+                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'✅':''} ${status}</span></td>
+                    </tr>`;
+                });
+            } else if(type === 'trainers') {
+                html += `<thead><tr>
+                    <th>ID</th><th>Name</th><th>Age</th>
+                    <th>Specialty</th><th>Total Salary</th><th>Remaining</th><th>Status</th>
+                </tr></thead><tbody>`;
+                rows.forEach(row => {
+                    const d = row.split('|');
+                    if(d.length < 7) return;
+                    const status = d[6].trim();
+                    html += `<tr>
+                        <td><code style="color:var(--accent2);font-size:12px">#${d[0]}</code></td>
+                        <td><b>${d[1]}</b></td>
+                        <td>${d[2]}</td>
+                        <td><span style="color:var(--accent);font-size:12px;background:rgba(79,142,247,0.1);padding:3px 8px;border-radius:4px">${d[3]}</span></td>
+                        <td>PKR ${parseInt(d[4]).toLocaleString()}</td>
+                        <td>PKR ${parseInt(d[5]).toLocaleString()}</td>
+                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'✅':'⏳'} ${status}</span></td>
+                    </tr>`;
+                });
+            } else {
+                html += `<thead><tr>
+                    <th>ID</th><th>Name</th><th>Age</th>
+                    <th>Role</th><th>Total Salary</th><th>Remaining</th><th>Status</th>
+                </tr></thead><tbody>`;
+                rows.forEach(row => {
+                    const d = row.split('|');
+                    if(d.length < 7) return;
+                    const status = d[6].trim();
+                    html += `<tr>
+                        <td><code style="color:var(--green);font-size:12px">#${d[0]}</code></td>
+                        <td><b>${d[1]}</b></td>
+                        <td>${d[2]}</td>
+                        <td><span style="color:var(--green);font-size:12px;background:rgba(34,197,94,0.1);padding:3px 8px;border-radius:4px">${d[3]}</span></td>
+                        <td>PKR ${parseInt(d[4]).toLocaleString()}</td>
+                        <td>PKR ${parseInt(d[5]).toLocaleString()}</td>
+                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'✅':'⏳'} ${status}</span></td>
+                    </tr>`;
+                });
+            }
+
+            html += '</tbody></table>';
+            document.getElementById('view-table').innerHTML = html;
+
+        } catch(err) {
+            document.getElementById('view-table').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">❌</div>
+                    <p>Cannot connect to server. Make sure server.exe is running.</p>
+                </div>`;
+        }
+    }
+
+    // ===== PROCESS PAYMENT =====
     async function processPayment() {
         const id = document.getElementById('pay-id').value;
         const amount = document.getElementById('pay-amount').value;
 
-        if(!id || !amount) { showMsg('pay-msg', 'Fill all fields!', false); return; }
+        if(!id || !amount) { showMsg('pay-msg', '⚠️ Please fill all fields!', false); return; }
+        if(amount <= 0) { showMsg('pay-msg', '⚠️ Amount must be greater than 0!', false); return; }
 
+        const btn = document.getElementById('pay-btn');
+        btn.disabled = true;
+        btn.innerText = 'Processing...';
+
+        const cap = currentPayType.charAt(0).toUpperCase() + currentPayType.slice(1);
         updateLog('pay-log',
             'POST /pay/' + currentPayType,
-            '>> ' + currentPayType.charAt(0).toUpperCase() + currentPayType.slice(1) + '::pay' + (currentPayType==='customer'?'Fee':'Salary') + '() called\n>> Payment::pay() called\n>> remaining -= amount executed'
+            '>> searchById<' + cap + '>() template called\n>> ' + cap + '::pay' + (currentPayType==='customer'?'Fee':'Salary') + '(' + amount + ') called\n>> Payment::pay() -> remaining -= amount\n>> Payment::updateStatus() called'
         );
 
-        const res = await fetch(API + "/pay/" + currentPayType, {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: `id=${id}&amount=${amount}`
-        });
-        const text = await res.text();
-        showMsg('pay-msg', text, text.includes('Success'));
-    }
-</script>
+        try {
+            const res = await fetch(API + '/pay/' + currentPayType, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `id=${id}&amount=${amount}`
+            });
+            const text = await res.text();
+            const success = text.includes('Success') || text.includes('Paid');
+            showMsg('pay-msg', (success ? '✅ ' : '❌ ') + text, success);
+            document.getElementById('pay-id').value = '';
+            document.getElementById('pay-amount').value = '';
+        } catch(err) {
+            showMsg('pay-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
+        }
 
+        btn.disabled = false;
+        btn.innerText = '💳 Process Payment';
+    }
+
+    // Init
+    updateStats();
+</script>
 </body>
 </html>
