@@ -5,40 +5,40 @@
 #include "person.h"
 using namespace std;
 
-class Trainer : public Person {
+class Staff : public Person {
 private:
     int id;
-    char specialty[30];
+    char role[30];
     Payment salary;
 
-    // Static member — track total trainers
-    static int totalTrainers;
+    // Static member — track total staff
+    static int totalStaff;
 
 public:
-    Trainer() {
+    Staff() {
         id = 0;
-        strcpy(specialty, "");
+        strcpy(role, "");
     }
 
-    void setData(int _id, const char* _name, int _age, const char* _spec, float sal) {
+    void setData(int _id, const char* _name, int _age, const char* _role, float sal) {
         id = _id;
         strcpy(name, _name);
         age = _age;
-        strcpy(specialty, _spec);
+        strcpy(role, _role);
         salary.setFee(sal);
-        totalTrainers++;
+        totalStaff++;
     }
 
     void paySalary(float amount) {
         salary.pay(amount);
     }
 
-    // Operator overloading — compare two trainers by ID
-    bool operator==(Trainer& other) {
+    // Operator overloading — compare two staff by ID
+    bool operator==(Staff& other) {
         return id == other.id;
     }
 
-    bool operator>(Trainer& other) {
+    bool operator>(Staff& other) {
         return id > other.id;
     }
 
@@ -46,7 +46,7 @@ public:
     int getId() { return id; }
     char* getName() { return name; }
     int getAge() { return age; }
-    char* getSpecialty() { return specialty; }
+    char* getRole() { return role; }
     float getTotal() { return salary.getTotal(); }
     float getRemaining() { return salary.getRemaining(); }
     char* getStatus() { return salary.getStatus(); }
@@ -56,7 +56,7 @@ public:
         cout << "| " << id
              << " | " << name
              << " | " << age
-             << " | " << specialty
+             << " | " << role
              << " | " << salary.getTotal()
              << " | " << salary.getRemaining()
              << " | " << salary.getStatus()
@@ -64,14 +64,14 @@ public:
     }
 
     // Static function
-    static int getTotalTrainers() {
-        return totalTrainers;
+    static int getTotalStaff() {
+        return totalStaff;
     }
 
     static void showStats() {
-        cout << "Total Trainers Registered: " << totalTrainers << endl;
+        cout << "Total Staff Registered: " << totalStaff << endl;
     }
 };
 
 // Static member initialize
-int Trainer::totalTrainers = 0;
+int Staff::totalStaff = 0;
