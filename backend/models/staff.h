@@ -1,3 +1,4 @@
+//staff.h
 #pragma once
 #include <cstring>
 #include "payment.h"

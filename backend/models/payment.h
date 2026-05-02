@@ -1,5 +1,7 @@
 #pragma once
+#include <iostream>
 #include <cstring>
+using namespace std;
 
 class Payment {
 private:
@@ -8,6 +10,9 @@ private:
     char status[10];
 
 public:
+    // Static member — track total payments in system
+    static int totalPayments;
+
     Payment() {
         total = 0;
         remaining = 0;
@@ -17,6 +22,7 @@ public:
     void setFee(float f) {
         total = f;
         remaining = f;
+        totalPayments++;
         updateStatus();
     }
 
@@ -34,7 +40,24 @@ public:
         }
     }
 
+    // Operator overloading — compare two payments by remaining amount
+    bool operator>(Payment& other) {
+        return remaining > other.remaining;
+    }
+
+    bool operator==(Payment& other) {
+        return remaining == other.remaining;
+    }
+
     float getTotal() { return total; }
     float getRemaining() { return remaining; }
     char* getStatus() { return status; }
+
+    // Static function
+    static void showTotalPayments() {
+        cout << "Total Payment Records: " << totalPayments << endl;
+    }
 };
+
+// Static member initialize
+int Payment::totalPayments = 0;
