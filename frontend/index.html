@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gym Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #0a0a1a; color: white; }
+        
+        .navbar { background: #111; padding: 15px 30px; display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #00aaff; }
+        .navbar h1 { color: #00aaff; font-size: 22px; }
+        .navbar button { background: #00aaff; color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .navbar button:hover { background: #0088cc; }
+        .navbar button.active { background: #ff6600; }
+
+        .container { padding: 30px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        h2 { color: #00aaff; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+
+        .form-box { background: #111; padding: 25px; border-radius: 10px; max-width: 500px; border: 1px solid #333; }
+        .form-box input, .form-box select { width: 100%; padding: 10px; margin: 8px 0; background: #1a1a2e; border: 1px solid #333; color: white; border-radius: 5px; font-size: 14px; }
+        .form-box button { width: 100%; padding: 12px; background: #00aaff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .form-box button:hover { background: #0088cc; }
+
+        .log-box { background: #0d1117; border: 1px solid #00aaff; border-radius: 8px; padding: 15px; margin-top: 20px; max-width: 500px; }
+        .log-box h4 { color: #00aaff; margin-bottom: 10px; }
+        .log-box pre { color: #00ff88; font-size: 13px; white-space: pre-wrap; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #00aaff; color: white; padding: 10px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #333; color: #ccc; }
+        tr:hover { background: #1a1a2e; }
+
+        .msg { padding: 10px; border-radius: 5px; margin-top: 10px; max-width: 500px; }
+        .msg.success { background: #003300; color: #00ff88; border: 1px solid #00ff88; }
+        .msg.error { background: #330000; color: #ff4444; border: 1px solid #ff4444; }
+
+        .tab-btns { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btns button { padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; background: #333; color: white; }
+        .tab-btns button.active { background: #00aaff; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h1>🏋️ Gym Management System</h1>
+    <button onclick="showSection('register')" id="btn-register">Register</button>
+    <button onclick="showSection('view')" id="btn-view">View</button>
+    <button onclick="showSection('pay')" id="btn-pay">Pay</button>
+</div>
+
+<div class="container">
+
+    <!-- REGISTER SECTION -->
+    <div class="section active" id="register">
+        <h2>Register</h2>
+        <div class="tab-btns">
+            <button class="active" onclick="showForm('customer')">Customer</button>
+            <button onclick="showForm('trainer')">Trainer</button>
+            <button onclick="showForm('staff')">Staff</button>
+        </div>
+
+        <!-- Customer Form -->
+        <div class="form-box" id="form-customer">
+            <h3 style="margin-bottom:15px; color:#ccc;">Customer Registration</h3>
+            <input type="text" id="c-name" placeholder="Full Name">
+            <input type="number" id="c-age" placeholder="Age (15-60)">
+            <input type="number" id="c-fee" placeholder="Monthly Fee">
+            <button onclick="registerCustomer()">Register Customer</button>
+            <div id="c-msg"></div>
+        </div>
+
+        <!-- Trainer Form -->
+        <div class="form-box" id="form-trainer" style="display:none;">
+            <h3 style="margin-bottom:15px; color:#ccc;">Trainer Registration</h3>
+            <input type="text" id="t-name" placeholder="Full Name">
+            <input type="number" id="t-age" placeholder="Age (20-50)">
+            <select id="t-specialty">
+                <option value="Strength">Strength</option>
+                <option value="Cardio">Cardio</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Bodybuilding">Bodybuilding</option>
+            </select>
+            <input type="number" id="t-salary" placeholder="Monthly Salary">
+            <button onclick="registerTrainer()">Register Trainer</button>
+            <div id="t-msg"></div>
+        </div>
+
+        <!-- Staff Form -->
+        <div class="form-box" id="form-staff" style="display:none;">
+            <h3 style="margin-bottom:15px; color:#ccc;">Staff Registration</h3>
+            <input type="text" id="s-name" placeholder="Full Name">
+            <input type="number" id="s-age" placeholder="Age (18-60)">
+            <select id="s-role">
+                <option value="Receptionist">Receptionist</option>
+                <option value="Cleaner">Cleaner</option>
+                <option value="Security">Security</option>
+                <option value="Manager">Manager</option>
+            </select>
+            <input type="number" id="s-salary" placeholder="Monthly Salary">
+            <button onclick="registerStaff()">Register Staff</button>
+            <div id="s-msg"></div>
+        </div>
+
+        <!-- API Log Box -->
+        <div class="log-box" style="margin-top:20px;">
+            <h4>🖥️ C++ Console Log (API Calls)</h4>
+            <pre id="api-log">Waiting for API call...</pre>
+        </div>
+    </div>
+
+    <!-- VIEW SECTION -->
+    <div class="section" id="view">
+        <h2>View Records</h2>
+        <div class="tab-btns">
+            <button class="active" onclick="viewData('customers')">Customers</button>
+            <button onclick="viewData('trainers')">Trainers</button>
+            <button onclick="viewData('staff')">Staff</button>
+        </div>
+        <div id="view-table"></div>
+    </div>
+
+    <!-- PAY SECTION -->
+    <div class="section" id="pay">
+        <h2>Process Payment</h2>
+        <div class="tab-btns">
+            <button class="active" onclick="showPayForm('customer')">Customer Fee</button>
+            <button onclick="showPayForm('trainer')">Trainer Salary</button>
+            <button onclick="showPayForm('staff')">Staff Salary</button>
+        </div>
+
+        <div class="form-box" id="pay-form">
+            <input type="number" id="pay-id" placeholder="Enter ID">
+            <input type="number" id="pay-amount" placeholder="Enter Amount">
+            <button onclick="processPayment()">Pay Now</button>
+            <div id="pay-msg"></div>
+        </div>
+
+        <div class="log-box" style="margin-top:20px;">
+            <h4>🖥️ C++ Console Log (API Calls)</h4>
+            <pre id="pay-log">Waiting for payment...</pre>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const API = "http://localhost:8080";
+    let currentPayType = "customer";
+
+    function showSection(name) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(name).classList.add('active');
+        if(name === 'view') viewData('customers');
+    }
+
+    function showForm(type) {
+        document.getElementById('form-customer').style.display = 'none';
+        document.getElementById('form-trainer').style.display = 'none';
+        document.getElementById('form-staff').style.display = 'none';
+        document.getElementById('form-' + type).style.display = 'block';
+    }
+
+    function showPayForm(type) {
+        currentPayType = type;
+        document.getElementById('pay-id').placeholder = "Enter " + type + " ID";
+    }
+
+    function showMsg(id, text, success) {
+        const el = document.getElementById(id);
+        el.className = 'msg ' + (success ? 'success' : 'error');
+        el.innerText = text;
+    }
+
+    function updateLog(logId, apiCall, cppLines) {
+        document.getElementById(logId).innerText =
+            "[API CALL] " + apiCall + "\n" + cppLines;
+    }
+
+    async function registerCustomer() {
+        const name = document.getElementById('c-name').value;
+        const age = document.getElementById('c-age').value;
+        const fee = document.getElementById('c-fee').value;
+
+        if(!name || !age || !fee) { showMsg('c-msg', 'Fill all fields!', false); return; }
+
+        updateLog('api-log',
+            'POST /register/customer',
+            '>> Customer::setData() called\n>> Payment::setFee() called\n>> customers[c++] executed'
+        );
+
+        const res = await fetch(API + "/register/customer", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: `name=${name}&age=${age}&fee=${fee}`
+        });
+        const text = await res.text();
+        showMsg('c-msg', text, true);
+    }
+
+    async function registerTrainer() {
+        const name = document.getElementById('t-name').value;
+        const age = document.getElementById('t-age').value;
+        const specialty = document.getElementById('t-specialty').value;
+        const salary = document.getElementById('t-salary').value;
+
+        if(!name || !age || !salary) { showMsg('t-msg', 'Fill all fields!', false); return; }
+
+        updateLog('api-log',
+            'POST /register/trainer',
+            '>> Trainer::setData() called\n>> Payment::setFee() called\n>> trainers[t++] executed'
+        );
+
+        const res = await fetch(API + "/register/trainer", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: `name=${name}&age=${age}&specialty=${specialty}&salary=${salary}`
+        });
+        const text = await res.text();
+        showMsg('t-msg', text, true);
+    }
+
+    async function registerStaff() {
+        const name = document.getElementById('s-name').value;
+        const age = document.getElementById('s-age').value;
+        const role = document.getElementById('s-role').value;
+        const salary = document.getElementById('s-salary').value;
+
+        if(!name || !age || !salary) { showMsg('s-msg', 'Fill all fields!', false); return; }
+
+        updateLog('api-log',
+            'POST /register/staff',
+            '>> Staff::setData() called\n>> Payment::setFee() called\n>> staffs[s++] executed'
+        );
+
+        const res = await fetch(API + "/register/staff", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: `name=${name}&age=${age}&role=${role}&salary=${salary}`
+        });
+        const text = await res.text();
+        showMsg('s-msg', text, true);
+    }
+
+    async function viewData(type) {
+        const res = await fetch(API + "/view/" + type);
+        const text = await res.text();
+
+        let html = '';
+        if(text === 'EMPTY') {
+            html = '<p style="color:#888; margin-top:10px;">No records found.</p>';
+        } else if(type === 'customers') {
+            html = '<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Total Fee</th><th>Remaining</th><th>Status</th></tr>';
+            text.trim().split('\n').forEach(row => {
+                const d = row.split(',');
+                html += `<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${parseFloat(d[3]).toFixed(0)}</td><td>${parseFloat(d[4]).toFixed(0)}</td><td style="color:${d[5]==='PAID'?'#00ff88':'#ff6600'}">${d[5]}</td></tr>`;
+            });
+            html += '</table>';
+        } else if(type === 'trainers') {
+            html = '<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Specialty</th><th>Total Salary</th><th>Remaining</th><th>Status</th></tr>';
+            text.trim().split('\n').forEach(row => {
+                const d = row.split(',');
+                html += `<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${d[3]}</td><td>${parseFloat(d[4]).toFixed(0)}</td><td>${parseFloat(d[5]).toFixed(0)}</td><td style="color:${d[6]==='PAID'?'#00ff88':'#ff6600'}">${d[6]}</td></tr>`;
+            });
+            html += '</table>';
+        } else if(type === 'staff') {
+            html = '<table><tr><th>ID</th><th>Name</th><th>Age</th><th>Role</th><th>Total Salary</th><th>Remaining</th><th>Status</th></tr>';
+            text.trim().split('\n').forEach(row => {
+                const d = row.split(',');
+                html += `<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${d[3]}</td><td>${parseFloat(d[4]).toFixed(0)}</td><td>${parseFloat(d[5]).toFixed(0)}</td><td style="color:${d[6]==='PAID'?'#00ff88':'#ff6600'}">${d[6]}</td></tr>`;
+            });
+            html += '</table>';
+        }
+
+        document.getElementById('view-table').innerHTML = html;
+    }
+
+    async function processPayment() {
+        const id = document.getElementById('pay-id').value;
+        const amount = document.getElementById('pay-amount').value;
+
+        if(!id || !amount) { showMsg('pay-msg', 'Fill all fields!', false); return; }
+
+        updateLog('pay-log',
+            'POST /pay/' + currentPayType,
+            '>> ' + currentPayType.charAt(0).toUpperCase() + currentPayType.slice(1) + '::pay' + (currentPayType==='customer'?'Fee':'Salary') + '() called\n>> Payment::pay() called\n>> remaining -= amount executed'
+        );
+
+        const res = await fetch(API + "/pay/" + currentPayType, {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: `id=${id}&amount=${amount}`
+        });
+        const text = await res.text();
+        showMsg('pay-msg', text, text.includes('Success'));
+    }
+</script>
+
+</body>
+</html>
