@@ -1,0 +1,18 @@
+# Compiled binaries
+backend/server.exe
+backend/server
+*.exe
+*.o
+
+# Data files
+backend/*.txt
+customers.txt
+trainers.txt
+staff.txt
+transactions.txt
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
