@@ -867,6 +867,9 @@
    //const API = "https://gym-management-cpp-production.up.railway.app";    // RAILWAY ONLINE
     let currentPayType = "customer";
     let customerCount = 0, trainerCount = 0, staffCount = 0;
+    let lastViewSubTab = "customers";
+    let lastRegisterSubTab = "customer";
+    let lastPaySubTab = "customer";
 
     // ===== SECTION SWITCHING =====
     function showSection(name) {
@@ -874,12 +877,17 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(name).classList.add('active');
         document.getElementById('nav-' + name).classList.add('active');
-        if(name === 'view') viewData('customers');
-        if(name === 'register') updateStats();
+        if(name === 'view') viewData(lastViewSubTab);
+        if(name === 'register') {
+            updateStats();
+            showForm(lastRegisterSubTab);
+        }
+        if(name === 'pay') showPayForm(lastPaySubTab);
     }
 
     // ===== FORM TAB SWITCHING =====
     function showForm(type) {
+        lastRegisterSubTab = type;
         ['customer','trainer','staff'].forEach(t => {
             document.getElementById('form-' + t).style.display = 'none';
             document.getElementById('tab-' + t).classList.remove('active');
@@ -890,6 +898,7 @@
 
     // ===== PAY FORM SWITCHING =====
     function showPayForm(type) {
+        lastPaySubTab = type;
         currentPayType = type;
         ['customer','trainer','staff'].forEach(t => {
             document.getElementById('ptab-' + t).classList.remove('active');
@@ -1110,6 +1119,7 @@
 
     // ===== VIEW DATA =====
     async function viewData(type) {
+        lastViewSubTab = type;
         ['customers','trainers','staff'].forEach(t => {
             document.getElementById('vtab-' + t).classList.remove('active');
         });

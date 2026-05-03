@@ -328,7 +328,7 @@ int main() {
         int index = searchById(customers, c, id);
         if(index != -1) {
             if (amount > customers[index].getRemaining()) {
-                res.set_content("Error: Amount exceeds remaining fee!", "text/plain");
+                res.set_content("Error: Amount exceeds remaining fee! (Remaining: PKR " + to_string((int)customers[index].getRemaining()) + ")", "text/plain");
                 return;
             }
             customers[index].payFee(amount);
@@ -353,7 +353,7 @@ int main() {
         int index = searchById(trainers, t, id);
         if(index != -1) {
             if (amount > trainers[index].getRemaining()) {
-                res.set_content("Error: Amount exceeds remaining salary!", "text/plain");
+                res.set_content("Error: Amount exceeds remaining salary! (Remaining: PKR " + to_string((int)trainers[index].getRemaining()) + ")", "text/plain");
                 return;
             }
             trainers[index].paySalary(amount);
@@ -378,7 +378,7 @@ int main() {
         int index = searchById(staffs, s, id);
         if(index != -1) {
             if (amount > staffs[index].getRemaining()) {
-                res.set_content("Error: Amount exceeds remaining salary!", "text/plain");
+                res.set_content("Error: Amount exceeds remaining salary! (Remaining: PKR " + to_string((int)staffs[index].getRemaining()) + ")", "text/plain");
                 return;
             }
             staffs[index].paySalary(amount);
