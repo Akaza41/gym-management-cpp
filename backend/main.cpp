@@ -248,14 +248,23 @@ int main() {
 
     // ---------- SERVE FRONTEND ----------
     app.Get("/", [](const httplib::Request&, httplib::Response& res) {
-    ifstream file("frontend/index.html");
-    if(!file.is_open()) {
-        res.set_content("<h1>Error: index.html not found</h1>", "text/html");
-        return;
+    // Try multiple paths
+    vector<string> paths = {
+        "frontend/index.html",
+        "/app/frontend/index.html",
+        "../frontend/index.html"
+    };
+    
+    for(auto& path : paths) {
+        ifstream file(path);
+        if(file.is_open()) {
+            string content((istreambuf_iterator<char>(file)),
+                            istreambuf_iterator<char>());
+            res.set_content(content, "text/html");
+            return;
+        }
     }
-    string content((istreambuf_iterator<char>(file)),
-                    istreambuf_iterator<char>());
-    res.set_content(content, "text/html");
+    res.set_content("<h1>Error: index.html not found in any path</h1>", "text/html");
 });
 
     // ---------- SYSTEM STATS ----------
