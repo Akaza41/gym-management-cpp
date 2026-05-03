@@ -1275,8 +1275,10 @@
             const text = await res.text();
             const success = text.includes('Success') || text.includes('Paid');
             showMsg('pay-msg', (success ? '✅ ' : '❌ ') + text, success);
-            document.getElementById('pay-id').value = '';
-            document.getElementById('pay-amount').value = '';
+            if(success) {
+                document.getElementById('pay-id').value = '';
+                document.getElementById('pay-amount').value = '';
+            }
         } catch(err) {
             showMsg('pay-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
         }
