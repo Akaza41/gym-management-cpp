@@ -912,6 +912,7 @@
     // ===== MSG DISPLAY =====
     function showMsg(id, text, success) {
         const el = document.getElementById(id);
+        el.style.display = ''; // Clear any direct display style
         el.className = 'msg show ' + (success ? 'success' : 'error');
         el.innerHTML = text;
     }
@@ -961,7 +962,7 @@
         const suggestions = getSuggestions(name, type);
         let html = `⚠️ "<b>${name}</b>" is already registered! Try:<br><div class="suggestions">`;
         suggestions.forEach(s => {
-            html += `<span class="suggest-chip" onclick="document.getElementById('${fieldId}').value='${s}'; document.getElementById('${msgId}').style.display='none';">👤 ${s}</span>`;
+            html += `<span class="suggest-chip" onclick="document.getElementById('${fieldId}').value='${s}'; document.getElementById('${msgId}').classList.remove('show'); document.getElementById('${msgId}').style.display='none';">👤 ${s}</span>`;
         });
         html += `</div>`;
         showMsg(msgId, html, false);
