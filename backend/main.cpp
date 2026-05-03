@@ -248,11 +248,15 @@ int main() {
 
     // ---------- SERVE FRONTEND ----------
     app.Get("/", [](const httplib::Request&, httplib::Response& res) {
-        ifstream file("../frontend/index.html");
-        string content((istreambuf_iterator<char>(file)),
-                        istreambuf_iterator<char>());
-        res.set_content(content, "text/html");
-    });
+    ifstream file("frontend/index.html");
+    if(!file.is_open()) {
+        res.set_content("<h1>Error: index.html not found</h1>", "text/html");
+        return;
+    }
+    string content((istreambuf_iterator<char>(file)),
+                    istreambuf_iterator<char>());
+    res.set_content(content, "text/html");
+});
 
     // ---------- SYSTEM STATS ----------
     app.Get("/stats", [&](const httplib::Request&, httplib::Response& res) {
