@@ -922,7 +922,9 @@
 
     // ===== STATS =====
     function updateStats() {
-        fetch(API + '/stats').then(r => r.text()).then(text => {
+        fetch(API + '/stats', {
+            headers: { 'ngrok-skip-browser-warning': 'true' }
+        }).then(r => r.text()).then(text => {
             const lines = text.split('\n');
             lines.forEach(line => {
                 if(line.includes('Total Customers:')) {
@@ -986,7 +988,10 @@
         try {
             const res = await fetch(API + '/register/customer', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: `name=${encodeURIComponent(name)}&age=${age}&fee=${fee}`
             });
             const text = await res.text();
@@ -1030,7 +1035,10 @@
         try {
             const res = await fetch(API + '/register/trainer', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: `name=${encodeURIComponent(name)}&age=${age}&specialty=${specialty}&salary=${salary}`
             });
             const text = await res.text();
@@ -1074,7 +1082,10 @@
         try {
             const res = await fetch(API + '/register/staff', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: `name=${encodeURIComponent(name)}&age=${age}&role=${role}&salary=${salary}`
             });
             const text = await res.text();
@@ -1106,7 +1117,9 @@
         document.getElementById('view-title').innerText = titles[type];
 
         try {
-            const res = await fetch(API + '/view/' + type);
+            const res = await fetch(API + '/view/' + type, {
+                headers: { 'ngrok-skip-browser-warning': 'true' }
+            });
             const text = await res.text();
 
             if(text.trim() === 'EMPTY' || text.trim() === '') {
@@ -1241,7 +1254,10 @@
         try {
             const res = await fetch(API + '/pay/' + currentPayType, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: `id=${id}&amount=${amount}`
             });
             const text = await res.text();
