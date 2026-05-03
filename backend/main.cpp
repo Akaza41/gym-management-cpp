@@ -162,7 +162,7 @@ void loadAllData() {
 void setCORS(httplib::Response& res) {
     res.set_header("Access-Control-Allow-Origin", "*");
     res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.set_header("Access-Control-Allow-Headers", "Content-Type");
+    res.set_header("Access-Control-Allow-Headers", "Content-Type, ngrok-skip-browser-warning");
 }
 
 int main() {
@@ -173,7 +173,7 @@ int main() {
     app.Options(".*", [](const httplib::Request&, httplib::Response& res) {
         res.set_header("Access-Control-Allow-Origin", "*");
         res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type, ngrok-skip-browser-warning");
         res.status = 204;
     });
 

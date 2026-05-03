@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitCore — Gym Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -617,7 +618,7 @@
 <!-- NAVBAR -->
 <nav class="navbar">
     <div class="navbar-brand">
-        <div class="logo-icon">🏋️</div>
+        <div class="logo-icon"><i class="fa-solid fa-dumbbell"></i></div>
         <div>
             <h1>FitCore</h1>
             <span>Gym Management System</span>
@@ -625,13 +626,13 @@
     </div>
     <div class="nav-links">
         <button class="nav-btn active" id="nav-register" onclick="showSection('register')">
-            ➕ Register
+            <i class="fa-solid fa-user-plus"></i> Register
         </button>
         <button class="nav-btn" id="nav-view" onclick="showSection('view')">
-            📋 Records
+            <i class="fa-solid fa-list-check"></i> Records
         </button>
         <button class="nav-btn" id="nav-pay" onclick="showSection('pay')">
-            💳 Payments
+            <i class="fa-solid fa-credit-card"></i> Payments
         </button>
     </div>
     <div class="nav-badge">
@@ -652,21 +653,21 @@
 
         <div class="stats-row">
             <div class="stat-card">
-                <div class="stat-icon blue">👤</div>
+                <div class="stat-icon blue"><i class="fa-solid fa-user"></i></div>
                 <div class="stat-info">
                     <h3 id="stat-customers">0</h3>
                     <p>Total Customers</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon purple">💪</div>
+                <div class="stat-icon purple"><i class="fa-solid fa-dumbbell"></i></div>
                 <div class="stat-info">
                     <h3 id="stat-trainers">0</h3>
                     <p>Total Trainers</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon green">🧑‍💼</div>
+                <div class="stat-icon green"><i class="fa-solid fa-user-tie"></i></div>
                 <div class="stat-info">
                     <h3 id="stat-staff">0</h3>
                     <p>Total Staff</p>
@@ -675,9 +676,9 @@
         </div>
 
         <div class="tab-switcher">
-            <button class="tab-btn active" id="tab-customer" onclick="showForm('customer')">👤 Customer</button>
-            <button class="tab-btn" id="tab-trainer" onclick="showForm('trainer')">💪 Trainer</button>
-            <button class="tab-btn" id="tab-staff" onclick="showForm('staff')">🧑‍💼 Staff</button>
+            <button class="tab-btn active" id="tab-customer" onclick="showForm('customer')"><i class="fa-solid fa-user"></i> Customer</button>
+            <button class="tab-btn" id="tab-trainer" onclick="showForm('trainer')"><i class="fa-solid fa-dumbbell"></i> Trainer</button>
+            <button class="tab-btn" id="tab-staff" onclick="showForm('staff')"><i class="fa-solid fa-user-tie"></i> Staff</button>
         </div>
 
         <div class="register-layout">
@@ -781,9 +782,9 @@
         </div>
 
         <div class="tab-switcher">
-            <button class="tab-btn active" id="vtab-customers" onclick="viewData('customers')">👤 Customers</button>
-            <button class="tab-btn" id="vtab-trainers" onclick="viewData('trainers')">💪 Trainers</button>
-            <button class="tab-btn" id="vtab-staff" onclick="viewData('staff')">🧑‍💼 Staff</button>
+            <button class="tab-btn active" id="vtab-customers" onclick="viewData('customers')"><i class="fa-solid fa-user"></i> Customers</button>
+            <button class="tab-btn" id="vtab-trainers" onclick="viewData('trainers')"><i class="fa-solid fa-dumbbell"></i> Trainers</button>
+            <button class="tab-btn" id="vtab-staff" onclick="viewData('staff')"><i class="fa-solid fa-user-tie"></i> Staff</button>
         </div>
 
         <div class="table-card">
@@ -803,9 +804,9 @@
         </div>
 
         <div class="tab-switcher">
-            <button class="tab-btn active" id="ptab-customer" onclick="showPayForm('customer')">👤 Customer Fee</button>
-            <button class="tab-btn" id="ptab-trainer" onclick="showPayForm('trainer')">💪 Trainer Salary</button>
-            <button class="tab-btn" id="ptab-staff" onclick="showPayForm('staff')">🧑‍💼 Staff Salary</button>
+            <button class="tab-btn active" id="ptab-customer" onclick="showPayForm('customer')"><i class="fa-solid fa-user"></i> Customer Fee</button>
+            <button class="tab-btn" id="ptab-trainer" onclick="showPayForm('trainer')"><i class="fa-solid fa-dumbbell"></i> Trainer Salary</button>
+            <button class="tab-btn" id="ptab-staff" onclick="showPayForm('staff')"><i class="fa-solid fa-user-tie"></i> Staff Salary</button>
         </div>
 
         <div class="pay-layout">
@@ -837,19 +838,19 @@
                 <div class="pay-info-card">
                     <h3>How to Pay</h3>
                     <div class="pay-tip">
-                        <div class="tip-icon">1️⃣</div>
+                        <div class="tip-icon"><span style="font-weight: bold; color: var(--accent);">1.</span></div>
                         <p>Go to <b>Records</b> tab and note the ID of the person you want to pay for</p>
                     </div>
                     <div class="pay-tip">
-                        <div class="tip-icon">2️⃣</div>
+                        <div class="tip-icon"><span style="font-weight: bold; color: var(--accent);">2.</span></div>
                         <p>Select the correct tab — <b>Customer Fee</b>, <b>Trainer Salary</b>, or <b>Staff Salary</b></p>
                     </div>
                     <div class="pay-tip">
-                        <div class="tip-icon">3️⃣</div>
+                        <div class="tip-icon"><span style="font-weight: bold; color: var(--accent);">3.</span></div>
                         <p>Enter the <b>ID</b> and the <b>amount</b> to pay, then click Process Payment</p>
                     </div>
                     <div class="pay-tip">
-                        <div class="tip-icon">✅</div>
+                        <div class="tip-icon"><i class="fa-solid fa-circle-check" style="color: var(--green);"></i></div>
                         <p>Status changes to <b style="color:var(--green)">PAID</b> when remaining amount reaches zero</p>
                     </div>
                 </div>
@@ -1131,7 +1132,7 @@
                             <th>Total Fee</th><th>Remaining</th><th>Status</th>
                         </tr></thead></table>
                         <div class="empty-state">
-                            <div class="empty-icon">👤</div>
+                            <div class="empty-icon"><i class="fa-solid fa-user" style="color: var(--muted); font-size: 32px;"></i></div>
                             <p>No customers registered yet. Go to Register tab to add one.</p>
                         </div>`;
                 } else if(type === 'trainers') {
@@ -1141,7 +1142,7 @@
                             <th>Specialty</th><th>Total Salary</th><th>Remaining</th><th>Status</th>
                         </tr></thead></table>
                         <div class="empty-state">
-                            <div class="empty-icon">💪</div>
+                            <div class="empty-icon"><i class="fa-solid fa-dumbbell" style="color: var(--muted); font-size: 32px;"></i></div>
                             <p>No trainers registered yet. Go to Register tab to add one.</p>
                         </div>`;
                 } else {
@@ -1151,7 +1152,7 @@
                             <th>Role</th><th>Total Salary</th><th>Remaining</th><th>Status</th>
                         </tr></thead></table>
                         <div class="empty-state">
-                            <div class="empty-icon">🧑‍💼</div>
+                            <div class="empty-icon"><i class="fa-solid fa-user-tie" style="color: var(--muted); font-size: 32px;"></i></div>
                             <p>No staff registered yet. Go to Register tab to add one.</p>
                         </div>`;
                 }
@@ -1178,7 +1179,7 @@
                         <td>${d[2]}</td>
                         <td>PKR ${parseInt(d[3]).toLocaleString()}</td>
                         <td>PKR ${parseInt(d[4]).toLocaleString()}</td>
-                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'✅':''} ${status}</span></td>
+                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'<i class="fa-solid fa-circle-check"></i> ':''} ${status}</span></td>
                     </tr>`;
                 });
             } else if(type === 'trainers') {
@@ -1197,7 +1198,7 @@
                         <td><span style="color:var(--accent);font-size:12px;background:rgba(79,142,247,0.1);padding:3px 8px;border-radius:4px">${d[3]}</span></td>
                         <td>PKR ${parseInt(d[4]).toLocaleString()}</td>
                         <td>PKR ${parseInt(d[5]).toLocaleString()}</td>
-                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'✅':'⏳'} ${status}</span></td>
+                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'<i class="fa-solid fa-circle-check"></i> ':'<i class="fa-solid fa-hourglass-half"></i> '} ${status}</span></td>
                     </tr>`;
                 });
             } else {
@@ -1216,7 +1217,7 @@
                         <td><span style="color:var(--green);font-size:12px;background:rgba(34,197,94,0.1);padding:3px 8px;border-radius:4px">${d[3]}</span></td>
                         <td>PKR ${parseInt(d[4]).toLocaleString()}</td>
                         <td>PKR ${parseInt(d[5]).toLocaleString()}</td>
-                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'✅':'⏳'} ${status}</span></td>
+                        <td><span class="status-badge ${status==='PAID'?'paid':'pending'}">${status==='PAID'?'<i class="fa-solid fa-circle-check"></i> ':'<i class="fa-solid fa-hourglass-half"></i> '} ${status}</span></td>
                     </tr>`;
                 });
             }
@@ -1227,7 +1228,7 @@
         } catch(err) {
             document.getElementById('view-table').innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">❌</div>
+                    <div class="empty-icon"><i class="fa-solid fa-circle-exclamation" style="color: var(--red);"></i></div>
                     <p>Cannot connect to server. Make sure server.exe is running.</p>
                 </div>`;
         }
