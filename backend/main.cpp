@@ -1,12 +1,19 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <winsock2.h>
+#endif
+
+#include "../include/httplib.h"
 #include "models/payment.h"
 #include "models/person.h"
 #include "models/customer.h"
 #include "models/trainer.h"
 #include "models/staff.h"
-#include "../include/httplib.h"
+
 using namespace std;
 
 // ========== TEMPLATES ==========
