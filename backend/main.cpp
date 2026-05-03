@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include <string>
 
 #ifdef _WIN32
@@ -283,6 +284,11 @@ int main() {
     cout << "  http://localhost:8080\n";
     cout << "================================\n";
 
-    app.listen("0.0.0.0", 8080);
+    // Railway uses PORT env variable
+const char* port_env = getenv("PORT");
+int port = port_env ? atoi(port_env) : 8080;
+
+cout << "Starting on port: " << port << endl;
+app.listen("0.0.0.0", port);
     return 0;
 }
