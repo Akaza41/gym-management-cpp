@@ -29,6 +29,15 @@ public:
         totalStaff++;
     }
 
+    void loadData(int _id, const char* _name, int _age, const char* _role, float sal, float rem) {
+        id = _id;
+        strcpy(name, _name);
+        age = _age;
+        strcpy(role, _role);
+        salary.loadPayment(sal, rem);
+        totalStaff++;
+    }
+
     void paySalary(float amount) {
         salary.pay(amount);
     }

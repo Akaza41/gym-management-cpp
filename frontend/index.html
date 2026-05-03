@@ -595,6 +595,21 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
+        /* ===== RESPONSIVENESS ===== */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; flex-direction: column; height: auto; padding-bottom: 10px; }
+            .navbar-brand { margin-top: 10px; margin-bottom: 10px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .stats-row { grid-template-columns: 1fr; }
+            .register-layout { grid-template-columns: 1fr; }
+            .pay-layout { grid-template-columns: 1fr; }
+            .main { padding: 16px; }
+            .form-card { max-width: 100%; }
+            .log-card { max-width: 100%; }
+            .table-card { overflow-x: auto; }
+            table { min-width: 600px; }
+        }
+
     </style>
 </head>
 <body>
@@ -930,23 +945,11 @@
     }
 
     // ===== NAME HELPERS =====
-    function nameExists(name, type) {
-        const names = JSON.parse(localStorage.getItem(type + '_names') || '[]');
-        return names.includes(name.toLowerCase().trim());
-    }
-
-    function saveName(name, type) {
-        const names = JSON.parse(localStorage.getItem(type + '_names') || '[]');
-        names.push(name.toLowerCase().trim());
-        localStorage.setItem(type + '_names', JSON.stringify(names));
-    }
-
     function getSuggestions(name, type) {
         const suggestions = [];
-        const options = [name+'_1', name+'_2', name+'_3', name+'123', name+'_new'];
-        for(let i = 0; i < options.length; i++) {
-            if(!nameExists(options[i], type)) suggestions.push(options[i]);
-            if(suggestions.length === 3) break;
+        for(let i = 0; i < 3; i++) {
+            let rnd = Math.floor(Math.random() * 10000);
+            suggestions.push(name + '_' + rnd);
         }
         return suggestions;
     }
@@ -955,7 +958,7 @@
         const suggestions = getSuggestions(name, type);
         let html = `⚠️ "<b>${name}</b>" is already registered! Try:<br><div class="suggestions">`;
         suggestions.forEach(s => {
-            html += `<span class="suggest-chip" onclick="document.getElementById('${fieldId}').value='${s}';this.parentElement.parentElement.parentElement.style.display='none';">👤 ${s}</span>`;
+            html += `<span class="suggest-chip" onclick="document.getElementById('${fieldId}').value='${s}'; document.getElementById('${msgId}').style.display='none';">👤 ${s}</span>`;
         });
         html += `</div>`;
         showMsg(msgId, html, false);
@@ -970,11 +973,6 @@
         if(!name || !age || !fee) { showMsg('c-msg', '⚠️ Please fill all fields!', false); return; }
         if(age < 15 || age > 60) { showMsg('c-msg', '⚠️ Age must be between 15 and 60!', false); return; }
         if(fee <= 0) { showMsg('c-msg', '⚠️ Fee must be greater than 0!', false); return; }
-
-        if(nameExists(name, 'customer')) {
-            showDuplicateError('c-msg', name, 'customer', 'c-name');
-            return;
-        }
 
         const btn = document.getElementById('c-btn');
         btn.disabled = true;
@@ -992,12 +990,15 @@
                 body: `name=${encodeURIComponent(name)}&age=${age}&fee=${fee}`
             });
             const text = await res.text();
-            showMsg('c-msg', '✅ ' + text, true);
-            saveName(name, 'customer');
-            document.getElementById('c-name').value = '';
-            document.getElementById('c-age').value = '';
-            document.getElementById('c-fee').value = '';
-            updateStats();
+            if (text.includes("Duplicate Name")) {
+                showDuplicateError('c-msg', name, 'customer', 'c-name');
+            } else {
+                showMsg('c-msg', '✅ ' + text, true);
+                document.getElementById('c-name').value = '';
+                document.getElementById('c-age').value = '';
+                document.getElementById('c-fee').value = '';
+                updateStats();
+            }
         } catch(err) {
             showMsg('c-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
         }
@@ -1017,11 +1018,6 @@
         if(age < 20 || age > 50) { showMsg('t-msg', '⚠️ Age must be between 20 and 50!', false); return; }
         if(salary <= 0) { showMsg('t-msg', '⚠️ Salary must be greater than 0!', false); return; }
 
-        if(nameExists(name, 'trainer')) {
-            showDuplicateError('t-msg', name, 'trainer', 't-name');
-            return;
-        }
-
         const btn = document.getElementById('t-btn');
         btn.disabled = true;
         btn.innerText = 'Registering...';
@@ -1038,12 +1034,15 @@
                 body: `name=${encodeURIComponent(name)}&age=${age}&specialty=${specialty}&salary=${salary}`
             });
             const text = await res.text();
-            showMsg('t-msg', '✅ ' + text, true);
-            saveName(name, 'trainer');
-            document.getElementById('t-name').value = '';
-            document.getElementById('t-age').value = '';
-            document.getElementById('t-salary').value = '';
-            updateStats();
+            if (text.includes("Duplicate Name")) {
+                showDuplicateError('t-msg', name, 'trainer', 't-name');
+            } else {
+                showMsg('t-msg', '✅ ' + text, true);
+                document.getElementById('t-name').value = '';
+                document.getElementById('t-age').value = '';
+                document.getElementById('t-salary').value = '';
+                updateStats();
+            }
         } catch(err) {
             showMsg('t-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
         }
@@ -1063,11 +1062,6 @@
         if(age < 18 || age > 60) { showMsg('s-msg', '⚠️ Age must be between 18 and 60!', false); return; }
         if(salary <= 0) { showMsg('s-msg', '⚠️ Salary must be greater than 0!', false); return; }
 
-        if(nameExists(name, 'staff')) {
-            showDuplicateError('s-msg', name, 'staff', 's-name');
-            return;
-        }
-
         const btn = document.getElementById('s-btn');
         btn.disabled = true;
         btn.innerText = 'Registering...';
@@ -1084,12 +1078,15 @@
                 body: `name=${encodeURIComponent(name)}&age=${age}&role=${role}&salary=${salary}`
             });
             const text = await res.text();
-            showMsg('s-msg', '✅ ' + text, true);
-            saveName(name, 'staff');
-            document.getElementById('s-name').value = '';
-            document.getElementById('s-age').value = '';
-            document.getElementById('s-salary').value = '';
-            updateStats();
+            if (text.includes("Duplicate Name")) {
+                showDuplicateError('s-msg', name, 'staff', 's-name');
+            } else {
+                showMsg('s-msg', '✅ ' + text, true);
+                document.getElementById('s-name').value = '';
+                document.getElementById('s-age').value = '';
+                document.getElementById('s-salary').value = '';
+                updateStats();
+            }
         } catch(err) {
             showMsg('s-msg', '❌ Server not reachable! Make sure server.exe is running.', false);
         }

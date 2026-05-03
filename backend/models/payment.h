@@ -26,6 +26,13 @@ public:
         updateStatus();
     }
 
+    void loadPayment(float t, float r) {
+        total = t;
+        remaining = r;
+        totalPayments++;
+        updateStatus();
+    }
+
     void pay(float amount) {
         remaining -= amount;
         updateStatus();

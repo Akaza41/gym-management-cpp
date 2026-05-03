@@ -4,7 +4,6 @@
 #include <string>
 
 #ifdef _WIN32
-    #define WIN32_LEAN_AND_MEAN
     #include <winsock2.h>
 #endif
 
@@ -47,6 +46,118 @@ Trainer trainers[20];
 Staff staffs[20];
 int c = 0, t = 0, s = 0;
 
+// ========== FILE HANDLING & VALIDATION ==========
+#include <cctype>
+string toLower(string s) {
+    string res = s;
+    for(char& ch : res) ch = tolower(ch);
+    return res;
+}
+
+bool isNameDuplicate(string name, string type) {
+    string lowerName = toLower(name);
+    if(type == "customer") {
+        for(int i=0; i<c; i++) if(toLower(customers[i].getName()) == lowerName) return true;
+    } else if(type == "trainer") {
+        for(int i=0; i<t; i++) if(toLower(trainers[i].getName()) == lowerName) return true;
+    } else if(type == "staff") {
+        for(int i=0; i<s; i++) if(toLower(staffs[i].getName()) == lowerName) return true;
+    }
+    return false;
+}
+
+void saveAllData() {
+    ofstream fc("customers.txt");
+    if(fc.is_open()) {
+        fc << c << "\n";
+        for(int i=0; i<c; i++) {
+            fc << customers[i].getId() << "\n"
+               << customers[i].getName() << "\n"
+               << customers[i].getAge() << "\n"
+               << customers[i].getTotal() << "\n"
+               << customers[i].getRemaining() << "\n";
+        }
+        fc.close();
+    }
+    
+    ofstream ft("trainers.txt");
+    if(ft.is_open()) {
+        ft << t << "\n";
+        for(int i=0; i<t; i++) {
+            ft << trainers[i].getId() << "\n"
+               << trainers[i].getName() << "\n"
+               << trainers[i].getAge() << "\n"
+               << trainers[i].getSpecialty() << "\n"
+               << trainers[i].getTotal() << "\n"
+               << trainers[i].getRemaining() << "\n";
+        }
+        ft.close();
+    }
+
+    ofstream fs("staff.txt");
+    if(fs.is_open()) {
+        fs << s << "\n";
+        for(int i=0; i<s; i++) {
+            fs << staffs[i].getId() << "\n"
+               << staffs[i].getName() << "\n"
+               << staffs[i].getAge() << "\n"
+               << staffs[i].getRole() << "\n"
+               << staffs[i].getTotal() << "\n"
+               << staffs[i].getRemaining() << "\n";
+        }
+        fs.close();
+    }
+}
+
+void loadAllData() {
+    ifstream fc("customers.txt");
+    if(fc.is_open()) {
+        int count;
+        if(fc >> count) {
+            for(int i=0; i<count; i++) {
+                int id, age; string name; float fee, rem;
+                fc >> id; fc.ignore(); getline(fc, name);
+                fc >> age >> fee >> rem;
+                customers[c].loadData(id, name.c_str(), age, fee, rem);
+                c++;
+            }
+        }
+        fc.close();
+    }
+    
+    ifstream ft("trainers.txt");
+    if(ft.is_open()) {
+        int count;
+        if(ft >> count) {
+            for(int i=0; i<count; i++) {
+                int id, age; string name, spec; float sal, rem;
+                ft >> id; ft.ignore(); getline(ft, name);
+                ft >> age; ft.ignore(); getline(ft, spec);
+                ft >> sal >> rem;
+                trainers[t].loadData(id, name.c_str(), age, spec.c_str(), sal, rem);
+                t++;
+            }
+        }
+        ft.close();
+    }
+
+    ifstream fs("staff.txt");
+    if(fs.is_open()) {
+        int count;
+        if(fs >> count) {
+            for(int i=0; i<count; i++) {
+                int id, age; string name, role; float sal, rem;
+                fs >> id; fs.ignore(); getline(fs, name);
+                fs >> age; fs.ignore(); getline(fs, role);
+                fs >> sal >> rem;
+                staffs[s].loadData(id, name.c_str(), age, role.c_str(), sal, rem);
+                s++;
+            }
+        }
+        fs.close();
+    }
+}
+
 // ========== CORS HELPER ==========
 void setCORS(httplib::Response& res) {
     res.set_header("Access-Control-Allow-Origin", "*");
@@ -55,7 +166,7 @@ void setCORS(httplib::Response& res) {
 }
 
 int main() {
-
+    loadAllData();
     httplib::Server app;
 
     // OPTIONS preflight
@@ -73,8 +184,14 @@ int main() {
         int age = stoi(req.get_param_value("age"));
         float fee = stof(req.get_param_value("fee"));
 
+        if (isNameDuplicate(name, "customer")) {
+            res.set_content("Error: Duplicate Name", "text/plain");
+            return;
+        }
+
         customers[c].setData(100 + c + 1, name.c_str(), age, fee);
         c++;
+        saveAllData();
 
         cout << "\n[API CALL] POST /register/customer\n";
         cout << ">> Customer::setData() called\n";
@@ -93,8 +210,14 @@ int main() {
         string specialty = req.get_param_value("specialty");
         float sal = stof(req.get_param_value("salary"));
 
+        if (isNameDuplicate(name, "trainer")) {
+            res.set_content("Error: Duplicate Name", "text/plain");
+            return;
+        }
+
         trainers[t].setData(200 + t + 1, name.c_str(), age, specialty.c_str(), sal);
         t++;
+        saveAllData();
 
         cout << "\n[API CALL] POST /register/trainer\n";
         cout << ">> Trainer::setData() called\n";
@@ -113,8 +236,14 @@ int main() {
         string role = req.get_param_value("role");
         float sal = stof(req.get_param_value("salary"));
 
+        if (isNameDuplicate(name, "staff")) {
+            res.set_content("Error: Duplicate Name", "text/plain");
+            return;
+        }
+
         staffs[s].setData(300 + s + 1, name.c_str(), age, role.c_str(), sal);
         s++;
+        saveAllData();
 
         cout << "\n[API CALL] POST /register/staff\n";
         cout << ">> Staff::setData() called\n";
@@ -198,8 +327,13 @@ int main() {
 
         int index = searchById(customers, c, id);
         if(index != -1) {
+            if (amount > customers[index].getRemaining()) {
+                res.set_content("Error: Amount exceeds remaining fee!", "text/plain");
+                return;
+            }
             customers[index].payFee(amount);
             customers[index].display();
+            saveAllData();
             res.set_content("Payment Successful! Remaining: " + 
                 to_string((int)customers[index].getRemaining()), "text/plain");
         } else {
@@ -218,8 +352,13 @@ int main() {
 
         int index = searchById(trainers, t, id);
         if(index != -1) {
+            if (amount > trainers[index].getRemaining()) {
+                res.set_content("Error: Amount exceeds remaining salary!", "text/plain");
+                return;
+            }
             trainers[index].paySalary(amount);
             trainers[index].display();
+            saveAllData();
             res.set_content("Salary Paid! Remaining: " + 
                 to_string((int)trainers[index].getRemaining()), "text/plain");
         } else {
@@ -238,8 +377,13 @@ int main() {
 
         int index = searchById(staffs, s, id);
         if(index != -1) {
+            if (amount > staffs[index].getRemaining()) {
+                res.set_content("Error: Amount exceeds remaining salary!", "text/plain");
+                return;
+            }
             staffs[index].paySalary(amount);
             staffs[index].display();
+            saveAllData();
             res.set_content("Salary Paid! Remaining: " + 
                 to_string((int)staffs[index].getRemaining()), "text/plain");
         } else {

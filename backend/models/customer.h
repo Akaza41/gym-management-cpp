@@ -26,6 +26,14 @@ public:
         totalCustomers++;
     }
 
+    void loadData(int _id, const char* _name, int _age, float fee, float rem) {
+        id = _id;
+        strcpy(name, _name);
+        age = _age;
+        payment.loadPayment(fee, rem);
+        totalCustomers++;
+    }
+
     void payFee(float amount) {
         payment.pay(amount);
     }
