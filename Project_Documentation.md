@@ -92,35 +92,44 @@ The system's architecture relies heavily on a hierarchical class structure. The 
 
 ```mermaid
 classDiagram
-    Person <|-- Customer : "Inherits"
-    Person <|-- Trainer : "Inherits"
-    Person <|-- Staff : "Inherits"
-    Customer --> Payment : "Has Record"
-    Trainer --> Payment : "Has Record"
-    Staff --> Payment : "Has Record"
-
+    direction LR
     class Person {
-        - Name
-        - Age
-        + ShowDetails()
+        <<Abstract>>
+        -Name
+        -Age
+        +ShowDetails()*
     }
+
     class Payment {
-        - TotalAmount
-        - RemainingBalance
-        + ProcessPayment()
+        -TotalAmount
+        -RemainingBalance
+        +ProcessPayment()
     }
+
     class Customer {
-        - CustomerID
-        + Register()
+        -CustomerID
+        +Register()
+        +PayFee()
     }
+
     class Trainer {
-        - TrainerID
-        + PaySalary()
+        -TrainerID
+        -Specialty
+        +PaySalary()
     }
+
     class Staff {
-        - StaffID
-        + PaySalary()
+        -StaffID
+        -Role
+        +PaySalary()
     }
+
+    Person <|-- Customer : "Is-A"
+    Person <|-- Trainer : "Is-A"
+    Person <|-- Staff : "Is-A"
+    Customer *-- Payment : "Has-A"
+    Trainer *-- Payment : "Has-A"
+    Staff *-- Payment : "Has-A"
 ```
 
 # 7. OOP Concepts Implementation in C++
