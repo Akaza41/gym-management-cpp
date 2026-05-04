@@ -94,55 +94,55 @@ The system's architecture relies heavily on a hierarchical class structure. The 
 classDiagram
     direction LR
     class Person {
-        <<Abstract Concept>>
+        <<Abstract>>
         - Name
         - Age
-        + Show Details
-        + Get Name
-        + Get Age
+        + ShowDetails()
+        + GetName()
+        + GetAge()
     }
 
     class Payment {
-        - Total Amount
-        - Remaining Balance
-        - Payment Status
-        + Set Fee
-        + Process Payment
-        + Compare Balances
+        - TotalAmount
+        - RemainingBalance
+        - PaymentStatus
+        + SetFee()
+        + ProcessPayment()
+        + CompareBalances()
     }
 
     class Customer {
-        - Customer ID
-        - Payment Record
-        + Register Customer
-        + Pay Monthly Fee
-        + Show Details
+        - CustomerID
+        - PaymentRecord
+        + RegisterCustomer()
+        + PayMonthlyFee()
+        + ShowDetails()
     }
 
     class Trainer {
-        - Trainer ID
-        - Fitness Specialty
-        - Salary Record
-        + Register Trainer
-        + Pay Salary
-        + Show Details
+        - TrainerID
+        - FitnessSpecialty
+        - SalaryRecord
+        + RegisterTrainer()
+        + PaySalary()
+        + ShowDetails()
     }
 
     class Staff {
-        - Staff ID
-        - Job Role
-        - Salary Record
-        + Register Staff
-        + Pay Salary
-        + Show Details
+        - StaffID
+        - JobRole
+        - SalaryRecord
+        + RegisterStaff()
+        + PaySalary()
+        + ShowDetails()
     }
 
-    Person <|-- Customer : Inherits (Is a Person)
-    Person <|-- Trainer : Inherits (Is a Person)
-    Person <|-- Staff : Inherits (Is a Person)
-    Customer --> Payment : Has Payment Record
-    Trainer --> Payment : Has Salary Record
-    Staff --> Payment : Has Salary Record
+    Person <|-- Customer : "Inherits (Is a Person)"
+    Person <|-- Trainer : "Inherits (Is a Person)"
+    Person <|-- Staff : "Inherits (Is a Person)"
+    Customer --> Payment : "Has Payment Record"
+    Trainer --> Payment : "Has Salary Record"
+    Staff --> Payment : "Has Salary Record"
 ```
 
 # 7. OOP Concepts Implementation in C++
