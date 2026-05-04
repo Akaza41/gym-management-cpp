@@ -1,6 +1,6 @@
 ---
 title: "Project Documentation: FitCore - Gym Management System"
-author: "Abdul Rehman, Abdul Raqeeb, Qasim Azeem, Umer Ashiq"
+author: "Abdul Raqeeb"
 date: "2026"
 ---
 
@@ -15,7 +15,7 @@ date: "2026"
 3. Qasim Azeem (25-Arid-6161)  
 4. Umer Ashiq (25-Arid-6195)  
 
-**Submitted To:** [Insert Sir's Name Here]  
+**Submitted To:** [Muhammad Irfan]  
 
 ---
 \pagebreak
